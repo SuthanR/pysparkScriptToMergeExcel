@@ -6,8 +6,8 @@ from pyspark.sql.functions import col
 spark = SparkSession.builder.appName("ExcelReadExample").getOrCreate()
 
 # Read the Excel files into dataframes
-file1 = "/Users/suthan/Source/Agex/source/pacs/pacs1.xlsx"
-file2 = "/Users/suthan/Source/Agex/source/dccb/dccb1.xlsx"
+file1 = "/Users/suthan/Source/Agex/pacs1.xlsx"
+file2 = "/Users/suthan/Source/Agex/dccb1.xlsx"
 df1 = pd.read_excel(file1)
 df2 = pd.read_excel(file2)
 
@@ -35,16 +35,13 @@ HAVING COUNT(*) = 1;
 # Show the result
 result.show()
 
-output_directory = "/Users/suthan/Source/Agex/target"
 
 # Define the file name with .csv extension
-output_file_name = "farm.csv"
-
-# Combine the directory and file name to create the full path
-output_path = os.path.join(output_directory, output_file_name)
+output_file = "/Users/suthan/Source/Agex/farm/result.csv"
 
 # Write the DataFrame to the specified path
-result.write.format("csv").option("header", "true").mode("overwrite").option("delimiter", ",").option("path", output_path).save()
+
+result.coalesce(1).write.format("com.databricks.spark.csv").option("header", "true").mode("overwrite").option("delimiter", ",").save(output_file)
 
 # Stop the Spark session
 spark.stop()
